@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultimate Forest Intelligence Command</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{margin:0;font-family:Segoe UI;background:#0b1e2d;color:white;}
+header{display:flex;justify-content:space-between;align-items:center;background:#102f46;padding:15px 25px;}
+.sidebar{width:220px;background:#123a56;position:fixed;top:70px;bottom:0;padding-top:20px;}
+.sidebar button{width:100%;background:none;border:none;color:white;padding:15px;text-align:left;cursor:pointer;}
+.sidebar button:hover{background:#16a34a;}
+.content{margin-left:240px;padding:25px;}
+.card{background:#0f2d44;padding:20px;border-radius:8px;margin-bottom:20px;}
+.kpi{display:flex;gap:15px;flex-wrap:wrap;}
+.kpi div{background:#123a56;padding:15px;border-radius:6px;min-width:160px;text-align:center;}
+.zone{height:70px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;font-weight:bold;}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.safe{background:#16a34a;}
+.warning{background:orange;}
+.critical{background:#7f1d1d;}
+.alert{background:#7f1d1d;padding:8px;border-radius:5px;margin-bottom:5px;}
+.section{display:none;}
+input,select{width:100%;padding:8px;margin:8px 0;border:none;border-radius:5px;}
+button{padding:8px 12px;background:#16a34a;border:none;border-radius:5px;color:white;cursor:pointer;}
+button:hover{background:#15803d;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:8px;border-bottom:1px solid #1f4d6d;}
+#loginPage{height:100vh;display:flex;justify-content:center;align-items:center;background:#071824;}
+.login-box{background:#102f46;padding:40px;border-radius:8px;width:320px;text-align:center;}
+.radar{width:150px;height:150px;border:3px solid #22c55e;border-radius:50%;margin:auto;position:relative;overflow:hidden;}
+.scan{width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5));position:absolute;animation:spin 3s linear infinite;}
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+<div class="login-box">
+<h2>Forest Command Login</h2>
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="error" style="color:red;"></p>
+</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
+
+<header>
+<div><b>PIXEL PIRATES</b> | Ultimate Forest Command</div>
+<div><span id="clock"></span>
+<button onclick="logout()">Logout</button></div>
+</header>
+
+<div class="sidebar">
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('surveillance')">Surveillance</button>
+<button onclick="show('map')">Zone Map</button>
+<button onclick="show('attendance')">Attendance</button>
+<button onclick="show('solar')">Solar & Weather</button>
+<button onclick="show('analytics')">Analytics</button>
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section" style="display:block;">
+<div class="card kpi">
+<div>Detections<br><b id="detect">0</b></div>
+<div>Alerts<br><b id="alertCount">0</b></div>
+<div>Officers<br><b id="offCount">0</b></div>
+<div>System Health<br><b>99%</b></div>
+</div>
+</div>
+
+<!-- SURVEILLANCE -->
+<div id="surveillance" class="section">
+<div class="card">
+<div class="radar"><div class="scan"></div></div><br>
+Animal: <b id="animal">None</b><br>
+Confidence: <b id="conf">0%</b><br>
+Risk: <b id="risk">SAFE</b><br><br>
+<button onclick="detectAnimal()">Run Detection</button>
+</div>
+<div class="card">
+<h3>Alerts</h3>
+<div id="alerts"></div>
+</div>
+</div>
+
+<!-- ZONE MAP -->
+<div id="map" class="section">
+<div class="card">
+<div class="map">
+<div class="zone safe" onclick="cycleZone(this)">Z1</div>
+<div class="zone safe" onclick="cycleZone(this)">Z2</div>
+<div class="zone safe" onclick="cycleZone(this)">Z3</div>
+<div class="zone safe" onclick="cycleZone(this)">Z4</div>
+<div class="zone safe" onclick="cycleZone(this)">Z5</div>
+<div class="zone safe" onclick="cycleZone(this)">Z6</div>
+<div class="zone safe" onclick="cycleZone(this)">Z7</div>
+<div class="zone safe" onclick="cycleZone(this)">Z8</div>
+</div>
+</div>
+</div>
+
+<!-- ATTENDANCE -->
+<div id="attendance" class="section">
+<div class="card">
+<input id="officerName" placeholder="Officer Name">
+<select id="offZone">
+<option>Z1</option><option>Z2</option><option>Z3</option>
+<option>Z4</option><option>Z5</option><option>Z6</option>
+<option>Z7</option><option>Z8</option>
+</select>
+<button onclick="mark()">Mark Present</button>
+<table>
+<tr><th>Name</th><th>Zone</th><th>Time</th></tr>
+<tbody id="table"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SOLAR & WEATHER -->
+<div id="solar" class="section">
+<div class="card">
+<h3>🌦 Live Weather - Chennai</h3>
+<p id="weather">Loading...</p>
+</div>
+
+<div class="card">
+<h3>🔋 Solar Microgrid</h3>
+Battery: <span id="bat">80%</span><br>
+Voltage: <span id="volt">14V</span><br>
+Current: <span id="curr">5A</span><br><br>
+<button onclick="updateEnv()">Manual Refresh</button>
+</div>
+</div>
+
+<!-- ANALYTICS -->
+<div id="analytics" class="section">
+<div class="card"><canvas id="chart"></canvas></div>
+</div>
+
+</div>
+</div>
+
+<script>
+setInterval(()=>clock.innerText=new Date().toLocaleString(),1000);
+
+function login(){
+if(password.value==="1234"){
+loginPage.style.display="none";
+app.style.display="block";
+}else error.innerText="Wrong Password";
+}
+
+function logout(){location.reload();}
+function show(id){document.querySelectorAll('.section').forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";}
+
+let det=0, alertNum=0, off=0;
+
+function detectAnimal(){
+let types=["Large Animal","Medium Animal","Small Animal"];
+let t=types[Math.floor(Math.random()*3)];
+let c=Math.floor(Math.random()*100);
+animal.innerText=t;
+conf.innerText=c+"%";
+risk.innerText=t==="Large Animal"?"CRITICAL":t==="Medium Animal"?"WARNING":"SAFE";
+if(t==="Large Animal"){
+alertNum++;
+alertCount.innerText=alertNum;
+alerts.innerHTML+=`<div class="alert">🚨 ${t} detected</div>`;
+}
+det++; detect.innerText=det;
+}
+
+function cycleZone(z){
+if(z.classList.contains("safe")){z.className="zone warning";}
+else if(z.classList.contains("warning")){z.className="zone critical";}
+else{z.className="zone safe";}
+}
+
+function mark(){
+if(officerName.value==="")return;
+table.innerHTML+=`<tr><td>${officerName.value}</td><td>${offZone.value}</td><td>${new Date().toLocaleString()}</td></tr>`;
+off++; offCount.innerText=off;
+officerName.value="";
+}
+
+function updateEnv(){
+bat.innerText=Math.floor(Math.random()*100)+"%";
+volt.innerText=(12+Math.random()*3).toFixed(1)+"V";
+curr.innerText=(2+Math.random()*5).toFixed(1)+"A";
+}
+
+/* WEATHER API */
+const apiKey="YOUR_API_KEY_HERE";
+fetch(`https://api.openweathermap.org/data/2.5/weather?q=Chennai&appid=${apiKey}&units=metric`)
+.then(res=>res.json())
+.then(data=>{
+weather.innerHTML=`Temperature: ${data.main.temp}°C<br>
+Condition: ${data.weather[0].description}`;
+})
+.catch(()=>weather.innerHTML="Weather unavailable");
+
+/* CHART */
+new Chart(document.getElementById("chart"),{
+type:"line",
+data:{labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+datasets:[{label:"Detections",data:[4,6,8,5,10,7,9],borderColor:"lime"}]}
+});
+</script>
+
+</body>
+</html>
