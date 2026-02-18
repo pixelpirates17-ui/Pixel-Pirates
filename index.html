@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultimate Forest Intelligence Command</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{margin:0;font-family:Segoe UI;background:#0b1e2d;color:white;}
+header{display:flex;justify-content:space-between;align-items:center;background:#102f46;padding:15px 25px;}
+.sidebar{width:220px;background:#123a56;position:fixed;top:70px;bottom:0;padding-top:20px;}
+.sidebar button{width:100%;background:none;border:none;color:white;padding:15px;text-align:left;cursor:pointer;}
+.sidebar button:hover{background:#16a34a;}
+.content{margin-left:240px;padding:25px;}
+.card{background:#0f2d44;padding:20px;border-radius:8px;margin-bottom:20px;}
+.kpi{display:flex;gap:15px;flex-wrap:wrap;}
+.kpi div{background:#123a56;padding:15px;border-radius:6px;min-width:160px;text-align:center;}
+.zone{height:70px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;font-weight:bold;}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.safe{background:#16a34a;}
+.warning{background:orange;}
+.critical{background:#7f1d1d;}
+.alert{background:#7f1d1d;padding:8px;border-radius:5px;margin-bottom:5px;}
+.section{display:none;}
+input,select{width:100%;padding:8px;margin:8px 0;border:none;border-radius:5px;}
+button{padding:8px 12px;background:#16a34a;border:none;border-radius:5px;color:white;cursor:pointer;}
+button:hover{background:#15803d;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:8px;border-bottom:1px solid #1f4d6d;}
+#loginPage{height:100vh;display:flex;justify-content:center;align-items:center;background:#071824;}
+.login-box{background:#102f46;padding:40px;border-radius:8px;width:320px;text-align:center;}
+.radar{width:150px;height:150px;border:3px solid #22c55e;border-radius:50%;margin:auto;position:relative;overflow:hidden;}
+.scan{width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5));position:absolute;animation:spin 3s linear infinite;}
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+<div class="login-box">
+<h2>Forest Command Login</h2>
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="error" style="color:red;"></p>
+</div>
+</div>
